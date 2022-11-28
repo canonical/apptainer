@@ -1,3 +1,4 @@
+# Snap
 /parts/
 /stage/
 /prime/
@@ -7,3 +8,6 @@ __pycache__
 *.pyc
 *_source.tar.bz2
 snap/.snapcraft
+
+# PyCharm
+/.idea/
