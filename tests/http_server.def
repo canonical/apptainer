@@ -1,0 +1,9 @@
+Bootstrap: docker
+From: python:3.11.0-slim-buster
+
+%startscript
+    python3 -m http.server --directory /opt
+
+%post
+    mkdir -p /opt
+    echo "Hello there" > /opt/test.txt
