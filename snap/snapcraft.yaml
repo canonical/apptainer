@@ -1,0 +1,73 @@
+# Copyright 2022 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+name: apptainer
+version: 1.1.3
+license: BSD-3-Clause-LBNL
+summary: An open-source container system for High-Performance Computing.
+description: |
+  Apptainer is the most widely used container system for High-Performance
+  Computing. It is designed to execute applications at bare-metal performance
+  while being secure, portable, and 100% reproducible. Apptainer is an
+  open-source  project with a friendly community of developers and users.
+  The user base continues to expand, with Apptainer now used across industry
+  and academia in many areas of work.
+
+base: core22
+grade: devel
+confinement: classic
+compression: lzo
+
+architectures:
+  - build-on: amd64
+
+parts:
+  apptainer:
+    plugin: dump
+    source: https://github.com/apptainer/apptainer.git
+    source-tag: v1.1.3
+    build-packages:
+      - build-essential
+      - libseccomp-dev
+      - pkg-config
+      - uidmap
+      - squashfs-tools
+      - squashfuse
+      - fuse2fs
+      - fuse-overlayfs
+      - fakeroot
+      - cryptsetup
+      - curl
+      - wget
+      - golang
+    stage-packages:
+      - build-essential
+      - libseccomp-dev
+      - pkg-config
+      - uidmap
+      - squashfs-tools
+      - squashfuse
+      - fuse2fs
+      - fuse-overlayfs
+      - fakeroot
+      - cryptsetup
+      - curl
+      - wget
+      - golang
+    override-build: |
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/opt
+      cd $CRAFT_PART_SRC
+      ./mconfig --prefix=$CRAFT_PART_INSTALL/opt
+      make -C builddir
+      make -C builddir install
+
+apps:
+  apptainer:
+    command: bin/apptainer
+
+  singularity:
+    command: bin/singularity
+
+  run-singularity:
+    command: bin/run-singularity
