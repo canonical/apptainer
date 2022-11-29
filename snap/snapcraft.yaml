@@ -56,11 +56,21 @@ parts:
       - golang
     override-build: |
       craftctl default
-      mkdir -p $CRAFT_PART_INSTALL/opt
       cd $CRAFT_PART_SRC
-      ./mconfig --prefix=$CRAFT_PART_INSTALL/opt
+      ./mconfig --prefix=$CRAFT_PART_INSTALL
       make -C builddir
       make -C builddir install
+
+  cleanup:
+    after: [apptainer]
+    plugin: nil
+    override-prime: |
+      set -eux
+      cd $CRAFT_PRIME
+      rm -rf \
+        *.md builddir cmd dist docs e2e \
+        examples go.mod go.sum internal \
+        makeit mconfig mlocal pkg scripts tools
 
 apps:
   apptainer:
