@@ -1,0 +1,18 @@
+# Copyright 2022 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+Bootstrap: docker
+From: r-base:4.2.2
+
+%runscript
+    Rscript /opt/sim.r
+
+%files
+    sim.r /opt/sim.r
+
+%post
+    Rscript -e "install.packages('reshape2', repos='http://lib.stat.cmu.edu/R/CRAN/')"
+    Rscript -e "install.packages('ggplot2', repos='http://lib.stat.cmu.edu/R/CRAN/')"
+
+%help
+    A test for checking that the Apptainer can run pre-bundled files.

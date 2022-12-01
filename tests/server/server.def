@@ -1,3 +1,6 @@
+# Copyright 2022 Canonical Ltd.
+# See LICENSE file for licensing details.
+
 Bootstrap: docker
 From: python:3.11.0-slim-buster
 
@@ -7,3 +10,6 @@ From: python:3.11.0-slim-buster
 %post
     mkdir -p /opt
     echo "Hello there" > /opt/test.txt
+
+%help
+    A test for checking that the Apptainer snap can run containers as services.
