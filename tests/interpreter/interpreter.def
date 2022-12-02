@@ -1,0 +1,12 @@
+# Copyright 2022 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+Bootstrap: docker
+From: python:3.11.0-slim-buster
+
+%post
+    python3 -m pip install tabulate emoji
+
+%help
+    A test for checking that the Apptainer snap can execute commands
+    and Python source files inside a container.
