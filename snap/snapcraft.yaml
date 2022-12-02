@@ -22,15 +22,31 @@ architectures:
   - build-on: amd64
 
 parts:
+  # Need to install newuidmap and newgidmap from source.
+  # This needs to be done because snapcraft automatically
+  # strips out the suid bit.
+  shadow:
+    plugin: dump
+    source: https://github.com/shadow-maint/shadow/releases/download/4.13/shadow-4.13.tar.gz
+    source-type: tar
+    build-packages:
+      - build-essential
+    override-build: |
+      craftctl default
+      cd $CRAFT_PART_SRC
+      ./configure --prefix=$CRAFT_PART_INSTALL
+      make && make install
+
   apptainer:
+    after: [shadow]
     plugin: dump
     source: https://github.com/apptainer/apptainer.git
     source-tag: v1.1.3
+    source-type: git
     build-packages:
       - build-essential
       - libseccomp-dev
       - pkg-config
-      - uidmap
       - squashfs-tools
       - squashfuse
       - fuse2fs
@@ -41,10 +57,8 @@ parts:
       - wget
       - golang
     stage-packages:
-      - build-essential
       - libseccomp-dev
       - pkg-config
-      - uidmap
       - squashfs-tools
       - squashfuse
       - fuse2fs
@@ -58,9 +72,9 @@ parts:
       craftctl default
       cd $CRAFT_PART_SRC
       ./mconfig --prefix=$CRAFT_PART_INSTALL
-      make -C builddir
-      make -C builddir install
+      make -C builddir && make -C builddir install
 
+  # Remove extraneous files and directories to trim snap size.
   cleanup:
     after: [apptainer]
     plugin: nil
@@ -68,9 +82,10 @@ parts:
       set -eux
       cd $CRAFT_PRIME
       rm -rf \
-        *.md builddir cmd dist docs e2e \
+        .git .gitignore *.md builddir cmd dist docs e2e \
         examples go.mod go.sum internal \
         makeit mconfig mlocal pkg scripts tools
+      sed -i 's;#.binary path =;binary path = /snap/apptainer/current/bin:/snap/apptainer/current/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin;g' etc/apptainer/apptainer.conf
 
 apps:
   apptainer:
