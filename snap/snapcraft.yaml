@@ -29,12 +29,14 @@ parts:
     plugin: dump
     source: https://github.com/shadow-maint/shadow/releases/download/4.13/shadow-4.13.tar.gz
     source-type: tar
+    build-attributes:
+      - enable-patchelf
     build-packages:
       - build-essential
     override-build: |
       craftctl default
       cd $CRAFT_PART_SRC
-      ./configure --prefix=$CRAFT_PART_INSTALL
+      ./configure --prefix=$CRAFT_PART_INSTALL/usr
       make && make install
 
   apptainer:
@@ -43,6 +45,8 @@ parts:
     source: https://github.com/apptainer/apptainer.git
     source-tag: v1.1.3
     source-type: git
+    build-attributes:
+      - enable-patchelf
     build-packages:
       - build-essential
       - libseccomp-dev
@@ -86,6 +90,9 @@ parts:
         examples go.mod go.sum internal \
         makeit mconfig mlocal pkg scripts tools
       sed -i 's;#.binary path =;binary path = /snap/apptainer/current/bin:/snap/apptainer/current/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin;g' etc/apptainer/apptainer.conf
+      chmod u+s usr/bin/squashfuse
+      chmod u+s usr/bin/newuidmap
+      chmod u+s usr/bin/newgidmap
 
 apps:
   apptainer:
