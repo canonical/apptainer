@@ -8,6 +8,7 @@ __pycache__
 *.pyc
 *_source.tar.bz2
 snap/.snapcraft
+/.tox/
 
 # PyCharm
 /.idea/
